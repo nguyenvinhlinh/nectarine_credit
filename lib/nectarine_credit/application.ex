@@ -9,7 +9,7 @@ defmodule NectarineCredit.Application do
   def start(_type, _args) do
     children = [
       NectarineCreditWeb.Telemetry,
-      NectarineCredit.Repo,
+      # NectarineCredit.Repo,
       {DNSCluster, query: Application.get_env(:nectarine_credit, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: NectarineCredit.PubSub},
       # Start a worker by calling: NectarineCredit.Worker.start_link(arg)
