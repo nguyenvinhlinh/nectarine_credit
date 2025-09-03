@@ -56,16 +56,16 @@ defmodule NectarineCredit.CreditEmailSender do
     """
     Dear,
 
-    You have been granted #{credit_amount} USD for credit.
+    You have been granted #{credit_amount} USD for credit. </br>
 
-    This is question list and your answers:
+    This is question list and your answers: </br>
 
-    1. Do you have a paying job? #{form_1_schema.q_1}
-    2. Did you consistently had a paying job for past 12 months? #{form_1_schema.q_2}
-    3. Did you own a house? #{form_1_schema.q_3}
-    4. Did you own a car? #{form_1_schema.q_4}
-    5. Do you have any additional source of income? #{form_1_schema.q_5}
-    6. What is your total monthly income from all income source (in USD)? #{form_2_schema.q_1}
+    1. Do you have a paying job? #{form_1_schema.q_1} </br>
+    2. Did you consistently had a paying job for past 12 months? #{form_1_schema.q_2} </br>
+    3. Did you own a house? #{form_1_schema.q_3} </br>
+    4. Did you own a car? #{form_1_schema.q_4} </br>
+    5. Do you have any additional source of income? #{form_1_schema.q_5} </br>
+    6. What is your total monthly income from all income source (in USD)? #{form_2_schema.q_1} </br>
     7. What are their total monthly expenses (in USD)? #{form_2_schema.q_2}
     """
   end
