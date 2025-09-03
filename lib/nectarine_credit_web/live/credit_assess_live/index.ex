@@ -1,6 +1,7 @@
 defmodule NectarineCreditWeb.CreditAssessLive.Index do
   use NectarineCreditWeb, :live_view
   alias NectarineCreditWeb.CreditAssessLive.Form1Schema
+  alias NectarineCreditWeb.CreditAssessLive.Form2Schema
   embed_templates "index_html/*"
 
   @impl true
@@ -33,22 +34,23 @@ defmodule NectarineCreditWeb.CreditAssessLive.Index do
   end
 
   def handle_live_action(socket, :scene_2, _params) do
+    form_2_schema = %Form2Schema{}
+    form_2 = form_2_schema
+    |> Form2Schema.changeset(%{})
+    |> to_form
     # check if scence 1 form did not submit, force to redirect
     socket
+    |> assign(:form_2, form_2)
+    |> assign(:form_2_is_submitted, false)
+    |> assign(:credit_amount, 0)
   end
 
-
   @impl true
-  def handle_event("validate_form_1", params, socket) do
-    {:noreply, socket}
-  end
-  @impl true
-
   def handle_event("submit_form_1", %{"form1_schema" => form1_params}, socket) do
     form_1_changeset = %Form1Schema{}
     |> Form1Schema.changeset(form1_params)
 
-    with true <- form_1_changeset.valid?,
+    with true <- is_changeset_valid?(form_1_changeset),
          form_1_schema <- Ecto.Changeset.apply_action!(form_1_changeset, :update),
          {:ok, :greater_than_6, total_score} <- is_score_greater_than_6(form_1_schema) do
       socket_mod = socket
@@ -74,6 +76,38 @@ defmodule NectarineCreditWeb.CreditAssessLive.Index do
     end
   end
 
+  @impl true
+  def handle_event("validate_form_2", %{"form2_schema" => form2_schema_params}, socket) do
+    form_2 = Form2Schema.changeset(%Form2Schema{}, form2_schema_params)
+    |> to_form(action: :validate)
+    socket_mod = socket
+    |> assign(:form_2, form_2)
+    {:noreply, socket_mod}
+  end
+
+  @impl true
+  def handle_event("submit_form_2", %{"form2_schema" => form2_schema_params}, socket) do
+    form_2_changeset = Form2Schema.changeset(%Form2Schema{}, form2_schema_params)
+    with true <- is_changeset_valid?(form_2_changeset),
+         form_2_schema <- Ecto.Changeset.apply_action!(form_2_changeset, :update),
+           credit_amount <- calculate_credit_amount(form_2_schema) do
+
+      socket_mod = socket
+      |> assign(:form_2_schema, form_2_schema)
+      |> assign(:credit_amount, credit_amount)
+      |> assign(:form_2_is_submitted, true)
+      {:noreply, socket_mod}
+    else
+      {:error, :changeset_invalid, changeset} ->
+        form_2 = to_form(changeset, action: :validate)
+        socket_mod = socket
+        |> assign(:form_2, form_2)
+        |> put_flash(:error, "Fix error(s) before submit")
+        {:noreply, socket_mod}
+
+    end
+  end
+
   def get_checked_value(field, radio_value) do
     if field.value in [true, "true"] and radio_value in [true, "true"], do: "true", else: "false"
   end
@@ -88,4 +122,7 @@ defmodule NectarineCreditWeb.CreditAssessLive.Index do
     if total_score > 6, do: {:ok, :greater_than_6, total_score}, else: {:error, :not_greater_than_6, form_1_schema, total_score}
   end
 
+  def calculate_credit_amount(form_2_schema) do
+    (form_2_schema.q_1 - form_2_schema.q_2) * 12
+  end
 end

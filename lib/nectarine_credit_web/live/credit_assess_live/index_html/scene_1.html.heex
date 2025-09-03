@@ -1,7 +1,7 @@
 <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
   <legend class="fieldset-legend text-lg">Credit Assessment</legend>
 
-  <.form :let={f} for={@form_1} id={@form_1.id} phx-change="validate_form_1" phx-submit="submit_form_1">
+  <.form :let={f} for={@form_1} id={@form_1.id} phx-submit="submit_form_1">
     <!-- Question 1 -->
     <label class="label font-bold text-lg">1. Do you have a paying job?</label>
     <div class="flex gap-3 text-lg">
@@ -59,7 +59,7 @@
     </div>
 
     <div class="flex justify-between ">
-      <button class="btn btn-secondary mt-4" type="button">Start over</button>
+      <button class="btn btn-secondary mt-4" type="button" phx-click={JS.navigate("/credit_assess")} >Start over</button>
       <button class="btn btn-primary mt-4" type="submit">Enter</button>
     </div>
   </.form>

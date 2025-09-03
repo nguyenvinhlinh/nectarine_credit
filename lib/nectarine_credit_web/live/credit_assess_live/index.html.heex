@@ -1,6 +1,9 @@
 <NectarineCreditWeb.Layouts.app_credit_assess flash={@flash}>
   <div class="flex justify-center items-center gap-2 h-screen" >
-    <.scene_1 :if={@live_action == :scene_1 } form_1={@form_1} form_1_is_submitted={@form_1_is_submitted} total_score={@total_score} />
+    <.scene_1 :if={@live_action == :scene_1 } form_1={@form_1} form_1_is_submitted={@form_1_is_submitted}
+              total_score={@total_score} />
+    <.scene_2 :if={@live_action == :scene_2 } form_2={@form_2} form_2_is_submitted={@form_2_is_submitted}
+              credit_amount={@credit_amount} />
   </div>
 
 </NectarineCreditWeb.Layouts.app_credit_assess>

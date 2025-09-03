@@ -1,0 +1,49 @@
+<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+  <legend class="fieldset-legend text-lg">Credit Assessment</legend>
+
+  <.form :let={f} for={@form_2} id={@form_2.id} phx-change="validate_form_2" phx-submit="submit_form_2">
+    <!-- Question 1 -->
+    <label class="label font-bold text-lg" for={f[:q_1].id} >
+      1. What is your total monthly income from all income source (in USD)?
+    </label>
+    <input type="number" step="100" class="input w-full" id={f[:q_1].id} name={f[:q_1].name}  value={f[:q_1].value} />
+
+    <div :if={used_input?(f[:q_1])} >
+      <p :for={error <- f[:q_1].errors} class="alert alert-error alert-soft">
+        {translate_error(error)}
+      </p>
+    </div>
+
+    <!-- Question 2 -->
+    <label class="label font-bold text-lg" for={f[:q_2].id} >
+      2. What are their total monthly expenses (in USD)?
+    </label>
+    <input type="number" step="100" class="input w-full" id={f[:q_2].id} name={f[:q_2].name}  value={f[:q_2].value} />
+
+    <div :if={used_input?(f[:q_2])} >
+      <p :for={error <- f[:q_2].errors} class="alert alert-error alert-soft">
+        {translate_error(error)}
+      </p>
+    </div>
+
+    <div class="flex justify-between ">
+      <button class="btn btn-secondary mt-4" type="button" phx-click={JS.navigate("/credit_assess")}>
+        Start over
+      </button>
+      <button class="btn btn-primary mt-4" type="submit">Enter</button>
+    </div>
+  </.form>
+</fieldset>
+
+<dialog :if={@form_2_is_submitted} id="scene_2_dialog" class="modal" open>
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">
+      Congratulations, you have been approved for credit up to {@credit_amount} amount (in USD)
+    </h3>
+
+
+    <div class="modal-action">
+      <button class="btn btn-secondary" phx-click={JS.navigate(~p"/credit_assess")}>Start Over</button>
+    </div>
+  </div>
+</dialog>
