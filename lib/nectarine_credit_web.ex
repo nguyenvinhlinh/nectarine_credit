@@ -48,6 +48,15 @@ defmodule NectarineCreditWeb do
     end
   end
 
+  def live_view_container_grow do
+    quote do
+      use Phoenix.LiveView, container: {:div, class: "flex h-screen min-w-0 grow flex-col overflow-auto justify-center items-center
+"}
+
+      unquote(html_helpers())
+    end
+  end
+
   def live_view do
     quote do
       use Phoenix.LiveView

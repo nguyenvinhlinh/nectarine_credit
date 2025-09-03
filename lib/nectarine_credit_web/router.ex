@@ -20,6 +20,13 @@ defmodule NectarineCreditWeb.Router do
     get "/", PageController, :home
   end
 
+  scope "/", NectarineCreditWeb do
+    pipe_through :browser
+    live "/credit_assess/", CreditAssessLive.Index, :index
+    live "/credit_assess/scene_1", CreditAssessLive.Index, :scene_1
+    live "/credit_assess/scene_2", CreditAssessLive.Index, :scene_2
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", NectarineCreditWeb do
   #   pipe_through :api

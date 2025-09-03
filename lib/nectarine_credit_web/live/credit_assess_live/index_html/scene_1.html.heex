@@ -1,0 +1,80 @@
+<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+  <legend class="fieldset-legend text-lg">Credit Assessment</legend>
+
+  <.form :let={f} for={@form_1} id={@form_1.id} phx-change="validate_form_1" phx-submit="submit_form_1">
+    <!-- Question 1 -->
+    <label class="label font-bold text-lg">1. Do you have a paying job?</label>
+    <div class="flex gap-3 text-lg">
+      <input type="radio" id={"#{f[:q_1].id}_true"} name={f[:q_1].name} class="radio radio-lg" value="true"   checked={get_checked_value(f[:q_1], true)} />
+      <label for={"#{f[:q_1].id}_true"}>True</label>
+
+      <input type="radio" id={"#{f[:q_1].id}_false"} name={f[:q_1].name} class="radio radio-lg" value="false" checked={get_checked_value(f[:q_1], false)} />
+      <label for={"#{f[:q_1].id}_false"}>False</label>
+    </div>
+    <div :if={used_input?(f[:q_1])} >
+      <p :for={error <- f[:q_1].errors} class="alert alert-error alert-soft">
+        {translate_error(error)}
+      </p>
+    </div>
+
+
+    <!-- Question 2 -->
+    <label class="label font-bold text-lg">2. Did you consistently had a paying job for past 12 months?</label>
+    <div class="flex gap-3 text-lg">
+      <input type="radio" id={"#{f[:q_2].id}_true"} name={f[:q_2].name} class="radio radio-lg" value="true"    checked={get_checked_value(f[:q_2], true)} />
+      <label for={"#{f[:q_2].id}_true"}>True</label>
+
+      <input type="radio" id={"#{f[:q_2].id}_false"} name={f[:q_2].name} class="radio radio-lg" value="false"  checked={get_checked_value(f[:q_2], false)}/>
+      <label for={"#{f[:q_2].id}_false"}>False</label>
+    </div>
+
+    <!-- Question 3 -->
+    <label class="label font-bold text-lg">3. Did you own a house?</label>
+    <div class="flex gap-3 text-lg">
+      <input type="radio" id={"#{f[:q_3].id}_true"} name={f[:q_3].name} class="radio radio-lg" value="true"    checked={get_checked_value(f[:q_3], true)} />
+      <label for={"#{f[:q_3].id}_true"}>True</label>
+
+      <input type="radio" id={"#{f[:q_3].id}_false"} name={f[:q_3].name} class="radio radio-lg" value="false"  checked={get_checked_value(f[:q_3], false)}/>
+      <label for={"#{f[:q_3].id}_false"}>False</label>
+    </div>
+
+    <!-- Question 4 -->
+    <label class="label font-bold text-lg">4. Did you own a car?</label>
+    <div class="flex gap-3 text-lg">
+      <input type="radio" id={"#{f[:q_4].id}_true"} name={f[:q_4].name} class="radio radio-lg" value="true"    checked={get_checked_value(f[:q_4], true)}/>
+      <label for={"#{f[:q_4].id}_true"}>True</label>
+
+      <input type="radio" id={"#{f[:q_4].id}_false"} name={f[:q_4].name} class="radio radio-lg" value="false"  checked={get_checked_value(f[:q_4], false)} />
+      <label for={"#{f[:q_4].id}_false"}>False</label>
+    </div>
+
+    <!-- Question 5 -->
+    <label class="label font-bold text-lg">5. Do you have any additional source of income?</label>
+    <div class="flex gap-3 text-lg">
+      <input type="radio" id={"#{f[:q_5].id}_true"} name={f[:q_5].name} class="radio radio-lg" value="true" checked={get_checked_value(f[:q_5], true)} />
+      <label for={"#{f[:q_5].id}_true"}>True</label>
+
+      <input type="radio" id={"#{f[:q_5].id}_false"} name={f[:q_5].name} class="radio radio-lg" value="false" checked={get_checked_value(f[:q_5], false)} />
+      <label for={"#{f[:q_5].id}_false"}>False</label>
+    </div>
+
+    <div class="flex justify-between ">
+      <button class="btn btn-secondary mt-4" type="button">Start over</button>
+      <button class="btn btn-primary mt-4" type="submit">Enter</button>
+    </div>
+  </.form>
+</fieldset>
+
+
+<!-- Open the modal using ID.showModal() method -->
+
+<dialog :if={@form_1_is_submitted and @total_score <= 6} id="scene_1_dialog_less_than_or_equal_6" class="modal" open>
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">Thank you for your answer. We are currently unable to issue credit to you</h3>
+    <div class="modal-action">
+
+      <button class="btn btn-secondary" phx-click={JS.navigate(~p"/credit_assess")}>Start Over</button>
+
+    </div>
+  </div>
+</dialog>

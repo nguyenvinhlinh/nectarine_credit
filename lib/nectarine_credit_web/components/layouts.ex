@@ -72,6 +72,17 @@ defmodule NectarineCreditWeb.Layouts do
     """
   end
 
+  def app_credit_assess(assigns) do
+    ~H"""
+    <main>
+      {render_slot(@inner_block)}
+    </main>
+
+
+    <.flash_group flash={@flash} />
+    """
+  end
+
   @doc """
   Shows the flash group with standard titles and content.
 
