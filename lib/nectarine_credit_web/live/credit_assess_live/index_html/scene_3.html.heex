@@ -1,0 +1,28 @@
+<dialog  id="scene_3_dialog" class="modal" open>
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">
+      Congratulations, you have been approved for credit up to {@credit_amount} amount (in USD)
+    </h3>
+
+    <.form :let={f} for={@form_3} id={@form_3.id} phx-change="validate_form_3" phx-submit="submit_form_3">
+      <label class="label font-bold text-lg" for={f[:email].id} >
+        Email
+      </label>
+      <input type="email" class="input w-full" id={f[:email].id} name={f[:email].name}  value={f[:email].value} />
+      <div :if={used_input?(f[:email])} >
+        <p :for={error <- f[:email].errors} class="alert alert-error alert-soft">
+          {translate_error(error)}
+        </p>
+      </div>
+
+      <div class="flex justify-between ">
+        <button class="btn btn-secondary mt-4" type="button" phx-click={JS.navigate("/credit_assess")}>
+          Start over
+        </button>
+        <button class="btn btn-primary mt-4" type="submit">Send Email</button>
+      </div>
+    </.form>
+
+
+  </div>
+</dialog>

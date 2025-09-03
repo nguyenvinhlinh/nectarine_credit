@@ -2,6 +2,7 @@ defmodule NectarineCreditWeb.CreditAssessLive.Index do
   use NectarineCreditWeb, :live_view
   alias NectarineCreditWeb.CreditAssessLive.Form1Schema
   alias NectarineCreditWeb.CreditAssessLive.Form2Schema
+  alias NectarineCreditWeb.CreditAssessLive.Form3Schema
   embed_templates "index_html/*"
 
   @impl true
@@ -27,22 +28,40 @@ defmodule NectarineCreditWeb.CreditAssessLive.Index do
     |> Form1Schema.changeset(%{})
     |> to_form()
 
-    socket_mod = socket
+    socket
     |> assign(:form_1, form_1)
     |> assign(:form_1_is_submitted, false)
     |> assign(:total_score, -1)
   end
 
   def handle_live_action(socket, :scene_2, _params) do
+    # check if scence 1 form did not submit, force to redirect
     form_2_schema = %Form2Schema{}
     form_2 = form_2_schema
     |> Form2Schema.changeset(%{})
     |> to_form
-    # check if scence 1 form did not submit, force to redirect
+
     socket
     |> assign(:form_2, form_2)
     |> assign(:form_2_is_submitted, false)
     |> assign(:credit_amount, 0)
+  end
+
+  def handle_live_action(socket, :scene_3, _params) do
+    IO.inspect "DEBUG #{__ENV__.file} @#{__ENV__.line}"
+    IO.inspect socket.assigns
+    IO.inspect "END"
+
+    # dev only
+    credit_amount = socket.assigns[:credit_amount]
+    # check if scence 2 form did not submit, force to redirect
+    form_3 = %Form3Schema{}
+    |> Form3Schema.changeset(%{})
+    |> to_form()
+
+    socket
+    |> assign(:form_3, form_3)
+    |> assign(:credit_amount, credit_amount)
   end
 
   @impl true
@@ -56,7 +75,9 @@ defmodule NectarineCreditWeb.CreditAssessLive.Index do
       socket_mod = socket
       |> assign(:form_1_schema, form_1_schema)
       |> assign(:form_1_is_submitted, true)
+      |> assign(:total_score, total_score)
       |> push_patch(to: ~p"/credit_assess/scene_2")
+      |> assign(:form_1, nil) # Free memory
 
       {:noreply, socket_mod}
     else
@@ -96,6 +117,8 @@ defmodule NectarineCreditWeb.CreditAssessLive.Index do
       |> assign(:form_2_schema, form_2_schema)
       |> assign(:credit_amount, credit_amount)
       |> assign(:form_2_is_submitted, true)
+      |> push_patch(to: ~p"/credit_assess/scene_3")
+      |> assign(:form_2, nil) # Free memory
       {:noreply, socket_mod}
     else
       {:error, :changeset_invalid, changeset} ->
@@ -106,6 +129,33 @@ defmodule NectarineCreditWeb.CreditAssessLive.Index do
         {:noreply, socket_mod}
 
     end
+  end
+
+  @impl true
+  def handle_event("validate_form_3", %{"form3_schema" => form3_schema_params}, socket) do
+    form_3 = Form3Schema.changeset(%Form3Schema{}, form3_schema_params)
+    |> to_form(action: :validate)
+
+    socket_mod = socket
+    |> assign(:form_3, form_3)
+    {:noreply, socket_mod}
+  end
+
+  @impl true
+  def handle_event("submit_form_3", %{"form3_schema" => form3_schema_params}, socket) do
+    form_3_schema = %Form3Schema{}
+    |> Form3Schema.changeset(form3_schema_params)
+    |> Ecto.Changeset.apply_action!(:update)
+
+    email = form_3_schema.email
+
+    # Redirect to scene 1
+    socket_mod = socket
+    |> put_flash(:info, "Sending email to #{email}")
+    |> push_navigate(to: ~p"/credit_assess/scene_1")
+    |> assign(:form_3, nil) #Free memory
+
+    {:noreply, socket_mod}
   end
 
   def get_checked_value(field, radio_value) do

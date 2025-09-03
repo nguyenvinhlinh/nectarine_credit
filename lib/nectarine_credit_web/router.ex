@@ -25,6 +25,7 @@ defmodule NectarineCreditWeb.Router do
     live "/credit_assess/", CreditAssessLive.Index, :index
     live "/credit_assess/scene_1", CreditAssessLive.Index, :scene_1
     live "/credit_assess/scene_2", CreditAssessLive.Index, :scene_2
+    live "/credit_assess/scene_3", CreditAssessLive.Index, :scene_3
   end
 
   # Other scopes may use custom stacks.
