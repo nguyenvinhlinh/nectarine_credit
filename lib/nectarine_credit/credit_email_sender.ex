@@ -21,7 +21,21 @@ defmodule NectarineCredit.CreditEmailSender do
   end
 
   def credit_granted_email(email, %Form1Schema{}=form_1_schema, %Form2Schema{}=form_2_schema, credit_amount) do
-    text_body = """
+    text_body = create_text_body_for_credit_grant_email(form_1_schema, form_2_schema, credit_amount)
+    html_body = create_html_body_for_credit_grant_email(form_1_schema, form_2_schema, credit_amount)
+    {:ok, pdf_file_path} = PdfGenerator.generate(html_body, page_size: "A5")
+    attachment = Swoosh.Attachment.new(pdf_file_path, filename: "NectarineCredit.pdf")
+
+    new()
+    |> to(email)
+    |> from({@from_fullname, @from_email})
+    |> subject("Nectarine Credit granted you credit!")
+    |> text_body(text_body)
+    |> attachment(attachment)
+  end
+
+  def create_text_body_for_credit_grant_email(%Form1Schema{}=form_1_schema, %Form2Schema{}=form_2_schema, credit_amount) do
+    """
     Dear,
 
     You have been granted #{credit_amount} USD for credit.
@@ -36,14 +50,24 @@ defmodule NectarineCredit.CreditEmailSender do
     6. What is your total monthly income from all income source (in USD)? #{form_2_schema.q_1}
     7. What are their total monthly expenses (in USD)? #{form_2_schema.q_2}
     """
+  end
 
+  def create_html_body_for_credit_grant_email(%Form1Schema{}=form_1_schema, %Form2Schema{}=form_2_schema, credit_amount) do
+    """
+    Dear,
 
-    new()
-    |> to(email)
-    |> from({@from_fullname, @from_email})
-    |> subject("Nectarine Credit granted you credit!")
-    |> text_body(text_body)
+    You have been granted #{credit_amount} USD for credit.
 
+    This is question list and your answers:
+
+    1. Do you have a paying job? #{form_1_schema.q_1}
+    2. Did you consistently had a paying job for past 12 months? #{form_1_schema.q_2}
+    3. Did you own a house? #{form_1_schema.q_3}
+    4. Did you own a car? #{form_1_schema.q_4}
+    5. Do you have any additional source of income? #{form_1_schema.q_5}
+    6. What is your total monthly income from all income source (in USD)? #{form_2_schema.q_1}
+    7. What are their total monthly expenses (in USD)? #{form_2_schema.q_2}
+    """
   end
 
   def test() do

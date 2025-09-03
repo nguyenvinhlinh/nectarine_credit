@@ -21,7 +21,7 @@ defmodule NectarineCredit.MixProject do
   def application do
     [
       mod: {NectarineCredit.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :pdf_generator]
     ]
   end
 
@@ -65,7 +65,8 @@ defmodule NectarineCredit.MixProject do
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.2.0"},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+      {:pdf_generator, ">=0.6.0" }
     ]
   end
 
