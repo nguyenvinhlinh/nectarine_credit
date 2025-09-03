@@ -3,6 +3,7 @@ defmodule NectarineCreditWeb.CreditAssessLive.Index do
   alias NectarineCreditWeb.CreditAssessLive.Form1Schema
   alias NectarineCreditWeb.CreditAssessLive.Form2Schema
   alias NectarineCreditWeb.CreditAssessLive.Form3Schema
+  alias NectarineCredit.CreditEmailSender
   embed_templates "index_html/*"
 
   @impl true
@@ -148,6 +149,12 @@ defmodule NectarineCreditWeb.CreditAssessLive.Index do
     |> Ecto.Changeset.apply_action!(:update)
 
     email = form_3_schema.email
+    form_1_schema = socket.assigns[:form_1_schema]
+    form_2_schema = socket.assigns[:form_2_schema]
+    credit_amount = socket.assigns[:credit_amount]
+
+    CreditEmailSender.credit_granted_email(email, form_1_schema, form_2_schema, credit_amount)
+    |> NectarineCredit.Mailer.deliver()
 
     # Redirect to scene 1
     socket_mod = socket
