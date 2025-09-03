@@ -24,7 +24,10 @@ defmodule NectarineCredit.CreditEmailSender do
     text_body = create_text_body_for_credit_grant_email(form_1_schema, form_2_schema, credit_amount)
     html_body = create_html_body_for_credit_grant_email(form_1_schema, form_2_schema, credit_amount)
     {:ok, pdf_file_path} = PdfGenerator.generate(html_body, page_size: "A5")
-    attachment = Swoosh.Attachment.new(pdf_file_path, filename: "NectarineCredit.pdf")
+    attachment = Swoosh.Attachment.new(pdf_file_path,
+      [filename: "NectarineCredit.pdf",
+       content_type: "application/pdf",
+       type: :attachment])
 
     new()
     |> to(email)
@@ -54,19 +57,23 @@ defmodule NectarineCredit.CreditEmailSender do
 
   def create_html_body_for_credit_grant_email(%Form1Schema{}=form_1_schema, %Form2Schema{}=form_2_schema, credit_amount) do
     """
-    Dear,
+    <html>
+      <body>
+        <p>
+          Dear,
+          You have been granted #{credit_amount} USD for credit. </br>
+          This is question list and your answers: </br>
 
-    You have been granted #{credit_amount} USD for credit. </br>
-
-    This is question list and your answers: </br>
-
-    1. Do you have a paying job? #{form_1_schema.q_1} </br>
-    2. Did you consistently had a paying job for past 12 months? #{form_1_schema.q_2} </br>
-    3. Did you own a house? #{form_1_schema.q_3} </br>
-    4. Did you own a car? #{form_1_schema.q_4} </br>
-    5. Do you have any additional source of income? #{form_1_schema.q_5} </br>
-    6. What is your total monthly income from all income source (in USD)? #{form_2_schema.q_1} </br>
-    7. What are their total monthly expenses (in USD)? #{form_2_schema.q_2}
+          1. Do you have a paying job? #{form_1_schema.q_1} </br>
+          2. Did you consistently had a paying job for past 12 months? #{form_1_schema.q_2} </br>
+          3. Did you own a house? #{form_1_schema.q_3} </br>
+          4. Did you own a car? #{form_1_schema.q_4} </br>
+          5. Do you have any additional source of income? #{form_1_schema.q_5} </br>
+          6. What is your total monthly income from all income source (in USD)? #{form_2_schema.q_1} </br>
+          7. What are their total monthly expenses (in USD)? #{form_2_schema.q_2}
+        </p>
+      </body>
+    </html>
     """
   end
 
