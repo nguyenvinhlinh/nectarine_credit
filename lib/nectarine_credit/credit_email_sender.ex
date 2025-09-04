@@ -24,7 +24,8 @@ defmodule NectarineCredit.CreditEmailSender do
     text_body = create_text_body_for_credit_grant_email(form_1_schema, form_2_schema, credit_amount)
     html_body = create_html_body_for_credit_grant_email(form_1_schema, form_2_schema, credit_amount)
     {:ok, pdf_file_path} = PdfGenerator.generate(html_body, page_size: "A5")
-    attachment = Swoosh.Attachment.new(pdf_file_path,
+    attachment = Swoosh.Attachment.new(
+      {:data, File.read!(pdf_file_path)},
       [filename: "NectarineCredit.pdf",
        content_type: "application/pdf",
        type: :attachment])

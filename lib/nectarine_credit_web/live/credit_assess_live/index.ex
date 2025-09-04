@@ -7,12 +7,12 @@ defmodule NectarineCreditWeb.CreditAssessLive.Index do
   embed_templates "index_html/*"
 
   @impl true
-  def mount(params, _session, socket) do
+  def mount(_params, _session, socket) do
     {:ok, socket}
   end
 
   @impl true
-  def handle_params(params, uri, socket) do
+  def handle_params(params, _uri, socket) do
     socket_mod = handle_live_action(socket, socket.assigns.live_action, params)
     {:noreply, socket_mod}
   end
@@ -36,33 +36,39 @@ defmodule NectarineCreditWeb.CreditAssessLive.Index do
   end
 
   def handle_live_action(socket, :scene_2, _params) do
-    # check if scence 1 form did not submit, force to redirect
-    form_2_schema = %Form2Schema{}
-    form_2 = form_2_schema
-    |> Form2Schema.changeset(%{})
-    |> to_form
+    form_1_is_submitted = Map.get(socket.assigns, :form_1_is_submitted)
 
-    socket
-    |> assign(:form_2, form_2)
-    |> assign(:form_2_is_submitted, false)
-    |> assign(:credit_amount, 0)
+    if form_1_is_submitted  do
+      form_2_schema = %Form2Schema{}
+      form_2 = form_2_schema
+      |> Form2Schema.changeset(%{})
+      |> to_form
+
+      socket
+      |> assign(:form_2, form_2)
+      |> assign(:form_2_is_submitted, false)
+      |> assign(:credit_amount, 0)
+    else
+      socket
+      |> push_patch(to: ~p"/credit_assess/scene_1")
+    end
   end
 
   def handle_live_action(socket, :scene_3, _params) do
-    IO.inspect "DEBUG #{__ENV__.file} @#{__ENV__.line}"
-    IO.inspect socket.assigns
-    IO.inspect "END"
+    form_2_is_submitted = Map.get(socket.assigns, :form_2_is_submitted)
+    if form_2_is_submitted do
+      credit_amount = socket.assigns[:credit_amount]
+      form_3 = %Form3Schema{}
+      |> Form3Schema.changeset(%{})
+      |> to_form()
 
-    # dev only
-    credit_amount = socket.assigns[:credit_amount]
-    # check if scence 2 form did not submit, force to redirect
-    form_3 = %Form3Schema{}
-    |> Form3Schema.changeset(%{})
-    |> to_form()
-
-    socket
-    |> assign(:form_3, form_3)
-    |> assign(:credit_amount, credit_amount)
+      socket
+      |> assign(:form_3, form_3)
+      |> assign(:credit_amount, credit_amount)
+    else
+      socket
+      |> push_patch(to: ~p"/credit_assess/scene_1")
+    end
   end
 
   @impl true
