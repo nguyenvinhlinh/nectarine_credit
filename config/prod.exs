@@ -12,7 +12,7 @@ config :nectarine_credit, NectarineCreditWeb.Endpoint,
 config :swoosh, api_client: Swoosh.ApiClient.Req
 
 # Disable Swoosh Local Memory Storage
-config :swoosh, local: false
+config :swoosh, local: true
 
 # Do not print debug messages in production
 config :logger, level: :info
