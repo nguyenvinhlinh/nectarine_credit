@@ -1,5 +1,7 @@
 # NectarineCredit
 
+At first you can visit [http://nectarine_credit.hexalink.xyz](http://nectarine_credit.hexalink.xyz) for testing if you dont want to deploy.
+
 ## Dependencies
 This project using [asdf](https://asdf-vm.com/) tool for language version manager. Check file `.tool-versions`
 
@@ -25,6 +27,7 @@ To start your Phoenix server:
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+
 
 ## Learn more
 
